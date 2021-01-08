@@ -3,6 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const connection = require('./database/database')
 const Ask = require('./model/Ask')
+const Answer = require('./model/Answer')
 
 //db
 connection.authenticate().then(() => {
@@ -46,20 +47,38 @@ app.post('/saveask', (req, res) => {
 })
 app.get('/asks/:id', (req, res) => {
     const id = req.params.id
-
     Ask.findOne({
         where: {id: id}
     }).then(ask => {
         if(ask != undefined){
-            res.render('asking')
+           
+           Answer.findAll({
+               where: {askId: ask.id},
+               order:[ 
+                        ['id', 'DESC'] 
+                    ]
+           }).then(answers => {
+               res.render('asking', {
+                    ask: ask,
+                    answers: answers
+                })
+           })          
         } else{
             res.redirect('/')
         }
     })
 })
 
-app.get('/asking', (req, res) => {
-    res.render('asking')
+app.post('/saveanswer', (req, res) => {
+    const body= req.body.body
+    const askId = req.body.ask
+
+    Answer.create({
+        body: body,
+        askId: askId
+    }).then(() => {
+        res.redirect('/asks/'+askId)
+    })
 })
 
 //PORTA SERVIDOR

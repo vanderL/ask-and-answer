@@ -1,6 +1,30 @@
 <%- include('partials/header.ejs') %>
 <%- include('partials/navbar.ejs') %>
 
-    <h1>Página do Registro! </h1>
+    <div class="container">
+        <hr>
+        <h1><%= ask.title %></h1>
+        <p><%= ask.description %></p>
+        <hr>
+        <form action="/saveanswer" method="post">
+            <h3>Comente</h3>
+            <label>comentário</label>
+            <textarea name="body" placeholder="Digite seu comentário" class="form-control"></textarea>
+            <input type="hidden" name="ask" value="<%= ask.id %>">
+            <br><button type="submit" class="btn btn-success">Responder</button>
+        </form>
+        <hr>
+        <h3>Respostas</h3>
+        <hr>
+        <% answers.forEach(answer => { %>
+
+           <br> <div class="card">
+                <div class="card-body">
+                    <p><%= answer.body %></p>
+                </div>
+            </div>
+
+        <% }) %>
+    </div>
 
 <%- include('partials/footer.ejs') %>
